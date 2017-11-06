@@ -1,0 +1,37 @@
+{
+  "name": "aparaviDemo",
+  "version": "0.1.0",
+  "private": false,
+  "devDependencies": {
+    "react-scripts": "1.0.11"
+  },
+  "dependencies": {
+  	"babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-react-es2015": "^1.2.0",
+    "body-parser": "~1.17.1",
+    "css-loader": "^0.28.4",
+    "express": "~4.15.2",
+    "hjs": "~0.0.6",
+    "mongoose": "^4.9.6",
+    "morgan": "~1.8.1",
+    "node-sass": "^4.5.3",
+    "nodemon": "latest",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-router": "^4.1.1",
+    "react-router-dom": "^4.1.1",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.0.0"
+  },
+  "scripts": {
+    "start": "npm run build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "build": "nodemon server & webpack -w",
+    "prod": "nodemon server & webpack -p"
+  }
+}

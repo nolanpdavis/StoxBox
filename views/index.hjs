@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <script src="https://use.fontawesome.com/2e90b2c588.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300|Roboto:500|Roboto:300|Merriweather+Sans" rel="stylesheet">
+  </head>
+  <body>
+      <div id="root"></div>
+      <script type="text/javascript" src="/static/bundle.js"></script>
+  </body>
+</html>
