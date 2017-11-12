@@ -2,9 +2,7 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose')
 
 var index = require('../routes/index');
 
@@ -19,14 +17,13 @@ app.set('view engine', 'hjs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use('/static', express.static(path.join(__dirname, '../dist')));
 
 app.use('/', index);
 
 // run server
-app.listen(4444, function () {
-  console.log('Listening on port 4444! Navigate to 192.168.0.112:4444 in the browser!')
+app.listen(5555, function () {
+  console.log('Listening on port 5555!')
 })
 
 // catch 404 and forward to error handler
