@@ -55,7 +55,7 @@ class Description extends Component {
 	render(){
 
 		return(
-			<div>
+			<div className="descriptionContainer">
                 <div key={this.state.id} dangerouslySetInnerHTML={{__html: this.state.description}} />
             </div>
 		)

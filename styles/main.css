@@ -27,3 +27,9 @@ p.stockCompany {
 	position: absolute;
 	padding: 5%;
 }
+
+.descriptionContainer {
+	padding: 10px;
+	height: 200px;
+	overflow-y: scroll;
+}
