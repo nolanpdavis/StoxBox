@@ -2,23 +2,25 @@ import React, { Component } from 'react'
 import actions from '../actions'
 import { connect } from 'react-redux'
 import { getDailyStock } from '../utils/getDailyStock'
-import { scaleLinear } from 'd3-scale'
-import { max } from 'd3-array'
-import { select } from 'd3-selection'
+import ReactFauxDOM from 'react-faux-dom';
+import * as d3 from 'd3';
 
 class Chart extends Component {
 	constructor(){
         super()
-		this.createBarChart = this.createBarChart.bind(this),
+		this.updateDimensions = this.updateDimensions.bind(this),
         this.state = {
 			company: "",
 			data: [],
-			size: [500, 500],
+			width: 500,
+            height: 500,
 			id: 0
         }
-}
-	componentWillMount(){
-		this.createBarChart();
+	}
+
+	componentDidMount(){
+		this.updateDimensions();
+        window.addEventListener("resize", this.updateDimensions);
 		getDailyStock(this.props.company.ticker, (err, response) => {
 			const rawData = response["Time Series (Daily)"]
 			var result = Object.keys(rawData).map(function(key) {
@@ -36,12 +38,16 @@ class Chart extends Component {
 			})
 		})
 	}
+
+	componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDimensions);
+    }
 
 	componentDidUpdate(){
 		if (this.props.company.company == this.state.company) {
 			return
 		}
-		this.createBarChart();
+		this.drawChart();
 		getDailyStock(this.props.company.ticker, (err, response) => {
 			const rawData = response["Time Series (Daily)"]
 			var result = Object.keys(rawData).map(function(key) {
@@ -60,47 +66,67 @@ class Chart extends Component {
 		})
 	}
 
-	createBarChart() {
-      const node = this.node
-	  const dataList = []
-	  for (let i=0;i<this.state.data.length;i++) {
+	drawChart() {
+        /* here goes the d3 */
+		const dataList = []
+		for (let i=0;i<this.state.data.length;i++) {
 		  dataList.push(parseInt(this.state.data[i][1]["4. close"]))
-	  }
-	  console.log(dataList)
-      const dataMax = max(dataList)
-      const yScale = scaleLinear()
-         .domain([0, dataMax])
-         .range([0, this.state.size[1]])
-   select(node)
-      .selectAll('rect')
-      .data(dataList)
-      .enter()
-      .append('rect')
+		}
+        //here we set our width and height to be the width and height calculated in the state in updateDimensions()
+        let {width, height} = this.state;
 
-   select(node)
-      .selectAll('rect')
-      .data(dataList)
-      .exit()
-      .remove()
+        // we create the faux element
+        let el = new ReactFauxDOM.Element('div');
+        // we set ref on our newly created element
+        el.setAttribute("ref", "chart");
 
-   select(node)
-      .selectAll('rect')
-      .data(dataList)
-      .style('fill', '#fe9922')
-      .attr('x', (d,i) => i * 25)
-      .attr('y', d => this.state.size[1] - yScale(d))
-      .attr('height', d => yScale(d))
-      .attr('width', 25)
-   }
+        // we attach the width and the height to our svg
+        let svg = d3.select(el).append('svg')
+                    .attr("width", width)
+                    .attr("height", height)
+
+					const dataMax = d3.max(dataList)
+			      const yScale = d3.scaleLinear()
+			         .domain([0, dataMax])
+			         .range([0, height])
+
+		d3.select('svg')
+			      .selectAll('rect')
+			      .data(dataList)
+			      .enter()
+			      .append('rect')
+
+			   d3.select('svg')
+			      .selectAll('rect')
+			      .data(dataList)
+			      .exit()
+			      .remove()
+
+			   d3.select('svg')
+			      .selectAll('rect')
+			      .data(dataList)
+			      .style('fill', '#fe9922')
+			      .attr('x', (d,i) => i * 25)
+			      .attr('y', d => height - yScale(d))
+			      .attr('height', d => yScale(d))
+			      .attr('width', 25)
+
+        // the rest of our chart would go here
+
+        //then we give the result back to react to render it
+        return el.toReact();
+	}
+
+	updateDimensions() {
+		const el = this.refs.chart;
+		this.setState({ width: el.offsetWidth, height: el.offsetHeight });
+	}
+
 
 	render(){
 
 		return(
-			<div key={this.state.id}>
-				<svg ref={node => this.node = node}
-			    	width={500} height={500}>
-			    </svg>
-			</div>
+			this.drawChart()
 		)
 	}
 }
